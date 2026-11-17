@@ -1,0 +1,20 @@
+# הגדרות העלאה ל-Render (גרסת הדגמה).
+# ב-Render: New → Blueprint → בוחרים את המאגר → Apply
+services:
+  - type: web
+    name: trustech-secretary
+    runtime: node
+    plan: free
+    region: frankfurt
+    branch: claude/spec
+    autoDeploy: true
+    buildCommand: npm ci && npm run build
+    startCommand: npm run start:demo
+    healthCheckPath: /login
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: DATABASE_URL
+        value: file:./data/demo.db

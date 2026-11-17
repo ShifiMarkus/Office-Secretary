@@ -11,7 +11,8 @@
     "start": "next start",
     "seed": "tsx prisma/seed.ts",
     "test": "vitest run",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+    "start:demo": "prisma db push && tsx prisma/seed.ts && next start -p ${PORT:-3000}"
   },
   "dependencies": {
     "@fontsource-variable/heebo": "5.3.0",
@@ -20,11 +21,14 @@
     "@prisma/client": "7.10.1",
     "better-sqlite3": "13.2.0",
     "canvas-confetti": "1.9.4",
+    "dotenv": "18.0.10",
     "lucide-react": "1.74.0",
     "next": "16.4.6",
+    "prisma": "7.10.1",
     "react": "19.3.1",
     "react-dom": "19.3.1",
-    "server-only": "0.0.1"
+    "server-only": "0.0.1",
+    "tsx": "4.23.15"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "4.3.5",
@@ -33,11 +37,11 @@
     "@types/node": "26.6.6",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
-    "dotenv": "18.0.10",
-    "prisma": "7.10.1",
     "tailwindcss": "4.3.5",
-    "tsx": "4.23.15",
     "typescript": "5.9.3",
     "vitest": "5.1.0"
+  },
+  "engines": {
+    "node": ">=20"
   }
 }
