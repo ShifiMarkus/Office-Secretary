@@ -1,0 +1,83 @@
+// מודל הנתונים — שלב 1 (משתמשים, צוותים, הודעות, ימי הולדת)
+// במצב הדגמה: SQLite. לפריסה אמיתית: לשנות provider ל-"postgresql".
+
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Team {
+  id      String @id @default(cuid())
+  name    String @unique
+  members User[]
+}
+
+model User {
+  id         String  @id @default(cuid())
+  entraId    String? @unique
+  name       String
+  email      String  @unique
+  jobTitle   String?
+  mobile     String?
+  hideMobile Boolean @default(false)
+  role       String  @default("EMPLOYEE") // EMPLOYEE | MANAGER
+  teamId     String?
+  team       Team?   @relation(fields: [teamId], references: [id])
+  avatarColor String @default("#889DB0")
+
+  // ימי הולדת
+  birthDate         DateTime? // תאריך לועזי (ללא שעה)
+  bornAfterSunset   Boolean   @default(false)
+  celebrateBy       String    @default("BOTH") // HEBREW | GREGORIAN | BOTH
+  showBirthday      Boolean   @default(false)
+  showBirthYear     Boolean   @default(false)
+  hireDate          DateTime?
+
+  announcements Announcement[]
+  reads         AnnouncementRead[]
+  wishesSent    BirthdayWish[] @relation("WishFrom")
+  wishesGot     BirthdayWish[] @relation("WishTo")
+  createdAt     DateTime @default(now())
+}
+
+model Announcement {
+  id        String   @id @default(cuid())
+  title     String
+  body      String
+  pinned    Boolean  @default(false)
+  important Boolean  @default(false)
+  expiresAt DateTime?
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id])
+  reads     AnnouncementRead[]
+  createdAt DateTime @default(now())
+}
+
+model AnnouncementRead {
+  announcementId String
+  userId         String
+  announcement   Announcement @relation(fields: [announcementId], references: [id], onDelete: Cascade)
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  readAt         DateTime     @default(now())
+  @@id([announcementId, userId])
+}
+
+model BirthdayWish {
+  id        String   @id @default(cuid())
+  toId      String
+  fromId    String
+  to        User     @relation("WishTo", fields: [toId], references: [id], onDelete: Cascade)
+  from      User     @relation("WishFrom", fields: [fromId], references: [id], onDelete: Cascade)
+  message   String
+  year      Int
+  createdAt DateTime @default(now())
+}
+
+model Setting {
+  key   String @id
+  value String
+}
